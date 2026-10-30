@@ -1,0 +1,95 @@
+/* General Reset & Layout Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* Header & Navigation */
+header {
+    background-color: #004080;
+    color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+nav ul li a:hover {
+    color: #a0c4ff;
+    text-decoration: underline;
+}
+
+/* Main Content Area */
+main {
+    flex: 1;
+    padding: 2.5rem;
+    max-width: 900px;
+    margin: 2rem auto;
+    background: #ffffff;
+    width: 90%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+h1 {
+    color: #004080;
+    margin-top: 0;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+/* Footer */
+footer {
+    background-color: #1a1a1a;
+    color: #cccccc;
+    text-align: center;
+    padding: 1.2rem;
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+/* Responsive Design for Mobile Devices */
+@media (max-width: 600px) {
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    main {
+        padding: 1.5rem;
+        margin: 1rem;
+        width: auto;
+    }
+}
