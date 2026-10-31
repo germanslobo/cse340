@@ -1,7 +1,34 @@
 <%- include('partials/header') %>
 <main>
     <h1><%= title %></h1>
-    <p>Organizations we collaborate with:</p>
-    <img src="/images/logo.png" alt="Organization Logo" width="150">
+    <p>Explore the inspiring organizations making a difference in our communities:</p>
+
+    <div class="organization-list" style="display: flex; flex-direction: column; gap: 2rem; margin-top: 1.5rem;">
+        
+        <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
+            <img src="/images/org1.png" alt="GreenEarth Initiative" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
+            <div>
+                <h3>GreenEarth Initiative</h3>
+                <p>Focused on local reforestation, environmental conservation, and sustainable community gardens.</p>
+            </div>
+        </div>
+
+        <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
+            <img src="/images/org2.png" alt="EduBridge Foundation" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
+            <div>
+                <h3>EduBridge Foundation</h3>
+                <p>Providing tutoring, digital literacy workshops, and educational supplies to underfunded schools.</p>
+            </div>
+        </div>
+
+        <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
+            <img src="/images/org3.png" alt="Community Care Network" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
+            <div>
+                <h3>Community Care Network</h3>
+                <p>Delivering food security programs, health and wellness check-ups, and support services to families in need.</p>
+            </div>
+        </div>
+
+    </div>
 </main>
 <%- include('partials/footer') %>
