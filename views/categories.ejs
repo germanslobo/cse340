@@ -1,11 +1,34 @@
-<%- include('partials/header') %>
-<main>
-    <h1><%= title %></h1>
-    <ul>
-        <li>Environmental</li>
-        <li>Educational</li>
-        <li>Community Service</li>
-        <li>Health and Wellness</li>
-    </ul>
-</main>
-<%- include('partials/footer') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Tu barra de navegación o header -->
+    
+    <main class="container">
+        <h1><%= title %></h1>
+        <p>Explore our service project categories.</p>
+
+        <!-- Sección para mostrar las categorías dinámicas de la base de datos -->
+        <div class="categories-section">
+            <% if (categories && categories.length > 0) { %>
+                <ul class="categories-list">
+                    <% categories.forEach(category => { %>
+                        <li>
+                            <strong><%= category.name %></strong>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>No categories found at this time.</p>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- Tu footer -->
+</body>
+</html>
