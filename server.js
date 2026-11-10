@@ -1,6 +1,7 @@
+// server.js
 import express from 'express';
-import { getAllProjects } from './src/models/projects.js';
 import { getAllCategories } from './src/models/categories.js';
+import router from './src/routes.js'; // 1. Importar el archivo de rutas modular
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,35 +28,23 @@ app.get('/organizations', async (req, res) => {
     });
 });
 
-// Service Projects Route
-app.get('/projects', async (req, res) => {
-    try {
-        const projects = await getAllProjects();
-        res.render('projects', { 
-            title: 'Service Projects', 
-            currentYear: new Date().getFullYear(),
-            projects
-        });
-    } catch (error) {
-        console.error('Error al cargar los proyectos:', error);
-        res.status(500).send('Error interno del servidor al cargar los proyectos.');
-    }
-});
-
-// Service Project Categories Route (Actualizada)
+// Service Project Categories Route
 app.get('/categories', async (req, res) => {
     try {
         const categories = await getAllCategories();
         res.render('categories', { 
             title: 'Service Project Categories', 
             currentYear: new Date().getFullYear(),
-            categories // Pasamos las categorías obtenidas de la base de datos a la vista
+            categories 
         });
     } catch (error) {
         console.error('Error al cargar las categorías:', error);
         res.status(500).send('Error interno del servidor al cargar las categorías.');
     }
 });
+
+// 2. Usar el enrutador modular para /projects y /project/:id
+app.use(router);
 
 // Start the server
 app.listen(port, () => {
