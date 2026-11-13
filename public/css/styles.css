@@ -93,3 +93,24 @@ footer {
         width: auto;
     }
 }
+
+.category-tags {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.category-tags .tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #eef2f6;
+    color: #1a365d;
+    border: 1px solid #cbd5e1;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.category-tags .tag:hover {
+    background-color: #dbeafe;
+}

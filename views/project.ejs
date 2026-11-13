@@ -2,16 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <h1><%= project.title %></h1>
-    <p><strong>Organizado por:</strong> <%= project.organization_name %></p>
-    <p><strong>Fecha:</strong> <%= project.date %></p>
-    <p><strong>Ubicación:</strong> <%= project.location %></p>
-    <p><strong>Descripción:</strong> <%= project.description %></p>
-    
-    <br>
-    <a href="/projects">← Volver a la lista de proyectos</a>
+    <%- include('partials/header') %>
+
+    <main class="container">
+        <h1><%= project.title %></h1>
+        <p><strong>Organizado por:</strong> <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a></p>
+        <p><strong>Fecha:</strong> <%= project.date %></p>
+        <p><strong>Ubicación:</strong> <%= project.location %></p>
+        <p><strong>Descripción:</strong> <%= project.description %></p>
+
+        <!-- Etiquetas (Tags) de categorías asociadas al proyecto -->
+        <div class="category-tags">
+            <strong>Categorías:</strong>
+            <% if (categories && categories.length > 0) { %>
+                <% categories.forEach(cat => { %>
+                    <a href="/category/<%= cat.category_id %>" class="tag"><%= cat.name %></a>
+                <% }) %>
+            <% } else { %>
+                <span>Sin categorías asignadas.</span>
+            <% } %>
+        </div>
+        
+        <br>
+        <a href="/projects">← Volver a la lista de proyectos</a>
+    </main>
+
+    <%- include('partials/footer') %>
 </body>
 </html>

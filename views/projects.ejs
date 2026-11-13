@@ -1,18 +1,33 @@
-<main>
-    <h1><%= title %></h1>
-    <% if (projects && projects.length > 0) { %>
-        <ul>
-            <% projects.forEach(project => { %>
-                <li>
-                    <!-- Enlace al detalle del proyecto -->
-                    <a href="/project/<%= project.project_id %>"><strong><%= project.title %></strong></a> 
-                    — Organizado por: 
-                    <!-- Enlace a los detalles de la organización -->
-                    <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
-                </li>
-            <% }) %>
-        </ul>
-    <% } else { %>
-        <p>No upcoming projects found.</p>
-    <% } %>
-</main>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="container">
+        <h1><%= title %></h1>
+        <% if (projects && projects.length > 0) { %>
+            <ul>
+                <% projects.forEach(project => { %>
+                    <li>
+                        <!-- Enlace al detalle del proyecto -->
+                        <a href="/project/<%= project.project_id %>"><strong><%= project.title %></strong></a> 
+                        — Organizado por: 
+                        <!-- Enlace a los detalles de la organización -->
+                        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p>No upcoming projects found.</p>
+        <% } %>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

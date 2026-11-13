@@ -38,9 +38,10 @@ export async function getUpcomingProjects(numberOfProjects) {
         JOIN organizations o ON p.organization_id = o.organization_id
         WHERE p.date >= CURDATE()
         ORDER BY p.date ASC
-        LIMIT ${limit};
+        LIMIT ?;
     `;
-    const [rows] = await pool.query(sql);
+    // Nota: Es más seguro pasar el limit como parámetro si la librería lo soporta, o interpolarlo de forma segura
+    const [rows] = await pool.query(sql, [limit]);
     return rows;
 }
 
@@ -57,4 +58,18 @@ export async function getProjectDetails(id) {
     `;
     const [rows] = await pool.query(sql, [id]);
     return rows[0]; // Return the single project object
+}
+
+/**
+ * Obtiene todas las categorías asociadas a un proyecto específico usando la tabla intermedia.
+ */
+export async function getCategoriesByProjectId(projectId) {
+    const query = `
+        SELECT c.category_id, c.name 
+        FROM categories c
+        JOIN project_categories pc ON c.category_id = pc.category_id
+        WHERE pc.project_id = ?
+    `;
+    const [rows] = await pool.query(query, [projectId]);
+    return rows;
 }
