@@ -1,4 +1,4 @@
-USE cse340;
+USE defaultdb;
 
 -- 1. Eliminar tablas si ya existen (en orden inverso por las dependencias de las llaves foráneas)
 DROP TABLE IF EXISTS project_categories;
@@ -6,18 +6,20 @@ DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS organizations;
 
--- 2. Crear la tabla organizations primero
+-- 2. Crear la tabla organizations con todas las columnas requeridas (name, description, contact_email, logo)
 CREATE TABLE organizations (
     organization_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
-    description TEXT
+    description TEXT,
+    contact_email VARCHAR(150),
+    logo VARCHAR(255)
 );
 
 -- 3. Insertar las organizaciones base (IDs 1, 2 y 3)
-INSERT INTO organizations (organization_id, name, description) VALUES
-(1, 'GreenEarth Initiative', 'Environmental conservation and community programs.'),
-(2, 'EduBridge Foundation', 'Educational support and digital literacy workshops.'),
-(3, 'Community Care Network', 'Food distribution, health clinics, and family support.');
+INSERT INTO organizations (organization_id, name, description, contact_email, logo) VALUES
+(1, 'GreenEarth Initiative', 'Environmental conservation and community programs.', 'contact@greenearth.org', 'greenearth-logo.png'),
+(2, 'EduBridge Foundation', 'Educational support and digital literacy workshops.', 'info@edubridge.org', 'edubridge-logo.png'),
+(3, 'Community Care Network', 'Food distribution, health clinics, and family support.', 'support@communitycare.org', 'communitycare-logo.png');
 
 -- 4. Crear la tabla categories
 CREATE TABLE categories (
@@ -81,11 +83,6 @@ INSERT INTO projects (organization_id, title, description, location, date) VALUE
 -- 9. Asociar cada proyecto con su respectiva categoría
 INSERT INTO project_categories (project_id, category_id) VALUES
 -- GreenEarth Initiative Projects -> Categoría 1
-(1, 1), (2, 1), (3, 1), (4, 1), (5, 1),
--- EduBridge Foundation Projects -> Categoría 2
-(6, 2), (7, 2), (8, 2), (9, 2), (10, 2),
--- Community Care Network Projects -> Categoría 3
-(11, 3), (12, 3), (13, 3), (14, 3), (15, 3);
 (1, 1), (2, 1), (3, 1), (4, 1), (5, 1),
 -- EduBridge Foundation Projects -> Categoría 2
 (6, 2), (7, 2), (8, 2), (9, 2), (10, 2),
