@@ -1,52 +1,25 @@
 // server.js
 import express from 'express';
-import { getAllCategories } from './src/models/categories.js';
-import router from './src/routes.js'; // 1. Importar el archivo de rutas modular
+import path from 'path';
+import { fileURLToPath } from 'url';
+import router from './src/routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Set EJS as the view engine
+// Configurar EJS y la ruta absoluta exacta de las vistas apuntando a la raíz del proyecto
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files (CSS, images) from the public folder
-app.use(express.static('public'));
+// Servir archivos estáticos desde la carpeta public
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Home Route
-app.get('/', async (req, res) => {
-    res.render('index', { 
-        title: 'Home', 
-        currentYear: new Date().getFullYear() 
-    });
-});
+// Usar el enrutador centralizado para todas las rutas
+app.use('/', router);
 
-// Organizations Route
-app.get('/organizations', async (req, res) => {
-    res.render('organizations', { 
-        title: 'Organizations', 
-        currentYear: new Date().getFullYear() 
-    });
-});
-
-// Service Project Categories Route
-app.get('/categories', async (req, res) => {
-    try {
-        const categories = await getAllCategories();
-        res.render('categories', { 
-            title: 'Service Project Categories', 
-            currentYear: new Date().getFullYear(),
-            categories 
-        });
-    } catch (error) {
-        console.error('Error al cargar las categorías:', error);
-        res.status(500).send('Error interno del servidor al cargar las categorías.');
-    }
-});
-
-// 2. Usar el enrutador modular para /projects y /project/:id
-app.use(router);
-
-// Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

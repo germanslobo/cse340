@@ -5,29 +5,23 @@
 
     <div class="organization-list" style="display: flex; flex-direction: column; gap: 2rem; margin-top: 1.5rem;">
         
-        <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
-            <img src="/images/org1.png" alt="GreenEarth Initiative" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
-            <div>
-                <h3>GreenEarth Initiative</h3>
-                <p>Focused on local reforestation, environmental conservation, and sustainable community gardens.</p>
-            </div>
-        </div>
-
-        <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
-            <img src="/images/org2.png" alt="EduBridge Foundation" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
-            <div>
-                <h3>EduBridge Foundation</h3>
-                <p>Providing tutoring, digital literacy workshops, and educational supplies to underfunded schools.</p>
-            </div>
-        </div>
-
-        <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px;">
-            <img src="/images/org3.png" alt="Community Care Network" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
-            <div>
-                <h3>Community Care Network</h3>
-                <p>Delivering food security programs, health and wellness check-ups, and support services to families in need.</p>
-            </div>
-        </div>
+        <% if (organizations && organizations.length > 0) { %>
+            <% organizations.forEach((org, index) => { %>
+                <!-- Cada tarjeta es un enlace funcional hacia la página de detalles de la organización -->
+                <a href="/organization/<%= org.organization_id %>" style="text-decoration: none; color: inherit;">
+                    <div class="org-card" style="display: flex; gap: 1.5rem; align-items: center; background: #f9f9f9; padding: 1rem; border-radius: 8px; transition: transform 0.2s ease;">
+                        <!-- Imagen dinámica basada en el índice de la organización (org1, org2, org3...) -->
+                        <img src="/images/org<%= index + 1 %>.png" alt="<%= org.name %>" style="width: 200px; height: 130px; object-fit: cover; border-radius: 6px;">
+                        <div>
+                            <h3 style="margin-top: 0; color: #004080;"><%= org.name %></h3>
+                            <p style="margin-bottom: 0; color: #555555;"><%= org.description %></p>
+                        </div>
+                    </div>
+                </a>
+            <% }) %>
+        <% } else { %>
+            <p>No organizations found at this time.</p>
+        <% } %>
 
     </div>
 </main>
