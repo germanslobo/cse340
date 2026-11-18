@@ -8,7 +8,7 @@ export const showOrganizationsPage = async (req, res) => {
         const organizations = await getAllOrganizations();
         res.render('organizations', {
             title: 'Organizations',
-            currentYear: new Date().getFullYear(), // <-- Agregado aquí
+            currentYear: new Date().getFullYear(),
             organizations
         });
     } catch (error) {
@@ -33,7 +33,7 @@ export const showOrganizationDetailsPage = async (req, res) => {
 
         res.render('organization', {
             title: organization.name,
-            currentYear: new Date().getFullYear(), // <-- Agregado aquí también por seguridad
+            currentYear: new Date().getFullYear(),
             organization,
             projects
         });
