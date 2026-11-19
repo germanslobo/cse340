@@ -10,6 +10,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Parsear datos de formularios HTML (application/x-www-form-urlencoded)
+app.use(express.urlencoded({ extended: true }));
+
 // Configurar EJS apuntando a la carpeta views en la raíz del proyecto
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

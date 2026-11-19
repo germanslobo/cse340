@@ -87,3 +87,31 @@ export const getCategoriesByProjectId = async (projectId) => {
         throw error;
     }
 };
+
+/**
+ * Actualiza un proyecto de servicio existente en la base de datos.
+ */
+export const updateProject = async (projectId, { title, description, location, date, organization_id }) => {
+    try {
+        const sql = `
+            UPDATE projects
+            SET title = ?,
+                description = ?,
+                location = ?,
+                date = ?,
+                organization_id = ?
+            WHERE project_id = ?;
+        `;
+        const params = [title, description, location, date, organization_id, projectId];
+        const [result] = await pool.query(sql, params);
+
+        if (!result || result.affectedRows === 0) {
+            throw new Error(`No project found with ID ${projectId} to update.`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error al actualizar el proyecto:', error);
+        throw error;
+    }
+};
