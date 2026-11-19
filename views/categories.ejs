@@ -1,36 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-    <%- include('partials/header') %>
-    
-    <main class="container">
-        <h1><%= title %></h1>
-        <p>Explore our service project categories.</p>
+<%- include('partials/header') %>
 
-        <!-- Sección para mostrar las categorías dinámicas de la base de datos -->
-        <div class="categories-section">
-            <% if (categories && categories.length > 0) { %>
-                <ul class="categories-list">
-                    <% categories.forEach(category => { %>
-                        <li>
-                            <a href="/category/<%= category.category_id %>">
-                                <strong><%= category.name %></strong>
-                            </a>
-                        </li>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <p>No categories found at this time.</p>
-            <% } %>
-        </div>
-    </main>
+<main class="container">
+    <h1><%= title %></h1>
+    <p>Explore our service project categories.</p>
 
-    <%- include('partials/footer') %>
-</body>
-</html>
+    <!-- Sección para mostrar las categorías dinámicas de la base de datos -->
+    <div class="categories-section">
+        <% if (categories && categories.length > 0) { %>
+            <ul class="categories-list">
+                <% categories.forEach(category => { %>
+                    <li>
+                        <a href="/category/<%= category.category_id %>">
+                            <strong><%= category.name %></strong>
+                        </a>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p>No categories found at this time.</p>
+        <% } %>
+    </div>
+</main>
+
+<%- include('partials/footer') %>
