@@ -3,6 +3,10 @@
     <h1><%= title %></h1>
     <p>Explore the inspiring organizations making a difference in our communities:</p>
 
+    <div class="actions" style="margin-top: 1rem;">
+        <a href="/new-organization">Add New Organization</a>
+    </div>
+
     <div class="organization-list" style="display: flex; flex-direction: column; gap: 2rem; margin-top: 1.5rem;">
         
         <% if (organizations && organizations.length > 0) { %>

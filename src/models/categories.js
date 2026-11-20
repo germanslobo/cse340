@@ -48,3 +48,41 @@ export const getProjectsByCategoryId = async (categoryId) => {
         throw error;
     }
 };
+
+/**
+ * Crea una nueva categoría en la base de datos y retorna el ID insertado.
+ */
+export const createCategory = async (name) => {
+    try {
+        const sql = `INSERT INTO categories (name) VALUES (?);`;
+        const [result] = await pool.query(sql, [name]);
+
+        if (!result || !result.insertId) {
+            throw new Error('Failed to create new category.');
+        }
+
+        return result.insertId;
+    } catch (error) {
+        console.error('Error al crear la categoría:', error);
+        throw error;
+    }
+};
+
+/**
+ * Actualiza el nombre de una categoría existente por su ID.
+ */
+export const updateCategory = async (categoryId, name) => {
+    try {
+        const sql = `UPDATE categories SET name = ? WHERE category_id = ?;`;
+        const [result] = await pool.query(sql, [name, categoryId]);
+
+        if (!result || result.affectedRows === 0) {
+            throw new Error(`No category found with ID ${categoryId} to update.`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error al actualizar la categoría:', error);
+        throw error;
+    }
+};

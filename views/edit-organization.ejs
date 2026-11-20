@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<main class="container">
+    <h1>Edit Organization</h1>
+
+    <% if (error) { %>
+        <p class="error-message" role="alert"><%= error %></p>
+    <% } %>
+
+    <form action="/edit-organization/<%= organization.organization_id %>" method="POST" class="form-container">
+        <div class="form-group">
+            <label for="name">Organization Name:</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="<%= organization.name %>"
+                maxlength="100"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea
+                id="description"
+                name="description"
+                rows="4"
+                maxlength="1000"
+                required
+            ><%= organization.description %></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="contact_email">Contact Email:</label>
+            <input
+                type="email"
+                id="contact_email"
+                name="contact_email"
+                value="<%= organization.contact_email %>"
+                maxlength="150"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="logo">Logo Path or URL:</label>
+            <input
+                type="text"
+                id="logo"
+                name="logo"
+                value="<%= organization.logo %>"
+                maxlength="255"
+            >
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">Save Changes</button>
+            <a href="/organization/<%= organization.organization_id %>">Cancel</a>
+        </div>
+    </form>
+</main>
+
+<%- include('partials/footer') %>

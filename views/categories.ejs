@@ -4,6 +4,10 @@
     <h1><%= title %></h1>
     <p>Explore our service project categories.</p>
 
+    <div class="actions">
+        <a href="/new-category">Add New Category</a>
+    </div>
+
     <!-- Sección para mostrar las categorías dinámicas de la base de datos -->
     <div class="categories-section">
         <% if (categories && categories.length > 0) { %>
@@ -13,6 +17,8 @@
                         <a href="/category/<%= category.category_id %>">
                             <strong><%= category.name %></strong>
                         </a>
+                        <span> — </span>
+                        <a href="/edit-category/<%= category.category_id %>">Edit</a>
                     </li>
                 <% }) %>
             </ul>

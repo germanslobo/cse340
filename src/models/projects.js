@@ -89,6 +89,29 @@ export const getCategoriesByProjectId = async (projectId) => {
 };
 
 /**
+ * Crea un nuevo proyecto de servicio en la base de datos y devuelve su ID.
+ */
+export const createProject = async ({ title, description, location, date, organization_id }) => {
+    try {
+        const sql = `
+            INSERT INTO projects (title, description, location, date, organization_id)
+            VALUES (?, ?, ?, ?, ?);
+        `;
+        const params = [title, description, location, date, organization_id];
+        const [result] = await pool.query(sql, params);
+
+        if (!result || !result.insertId) {
+            throw new Error('Failed to create new service project.');
+        }
+
+        return result.insertId;
+    } catch (error) {
+        console.error('Error al crear el proyecto de servicio:', error);
+        throw error;
+    }
+};
+
+/**
  * Actualiza un proyecto de servicio existente en la base de datos.
  */
 export const updateProject = async (projectId, { title, description, location, date, organization_id }) => {
@@ -113,5 +136,43 @@ export const updateProject = async (projectId, { title, description, location, d
     } catch (error) {
         console.error('Error al actualizar el proyecto:', error);
         throw error;
+    }
+};
+
+/**
+ * Reemplaza las categorías asignadas a un proyecto dentro de una transacción.
+ */
+export const updateProjectCategories = async (projectId, categoryIds = []) => {
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        await connection.query(
+            'DELETE FROM project_categories WHERE project_id = ?;',
+            [projectId]
+        );
+
+        const normalizedIds = Array.isArray(categoryIds)
+            ? categoryIds.map((id) => parseInt(id, 10)).filter((id) => !Number.isNaN(id))
+            : categoryIds
+                ? [parseInt(categoryIds, 10)].filter((id) => !Number.isNaN(id))
+                : [];
+
+        if (normalizedIds.length > 0) {
+            const values = normalizedIds.map((categoryId) => [projectId, categoryId]);
+            await connection.query(
+                'INSERT INTO project_categories (project_id, category_id) VALUES ?;',
+                [values]
+            );
+        }
+
+        await connection.commit();
+        return normalizedIds;
+    } catch (error) {
+        await connection.rollback();
+        console.error('Error al actualizar las categorías del proyecto:', error);
+        throw error;
+    } finally {
+        connection.release();
     }
 };
