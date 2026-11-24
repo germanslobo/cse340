@@ -1,5 +1,7 @@
 // server.js
+import 'dotenv/config';
 import express from 'express';
+import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import router from './src/routes.js';
@@ -12,6 +14,29 @@ const port = process.env.PORT || 3000;
 
 // Parsear datos de formularios HTML (application/x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true }));
+
+// Configurar sesión de usuario
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || 'cse340-secret-key-change-in-prod',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24 // 1 día
+        }
+    })
+);
+
+// Exponer usuario actual y mensajes flash a todas las vistas EJS
+app.use((req, res, next) => {
+    res.locals.currentUser = req.session?.user || null;
+    res.locals.flashMessage = req.session?.flashMessage || null;
+    if (req.session) {
+        delete req.session.flashMessage;
+    }
+    next();
+});
 
 // Configurar EJS apuntando a la carpeta views en la raíz del proyecto
 app.set('view engine', 'ejs');

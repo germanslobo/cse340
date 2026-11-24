@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<section class="users-section">
+    <h1>Registered Users</h1>
+
+    <% if (users && users.length > 0) { %>
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email (Username)</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.user_id %></td>
+                        <td><%= user.name %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.role %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No registered users found.</p>
+    <% } %>
+
+    <p class="back-link">
+        <a href="/dashboard" class="btn">Back to Dashboard</a>
+    </p>
+</section>
+
+<%- include('partials/footer') %>
