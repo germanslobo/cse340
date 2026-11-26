@@ -1,10 +1,12 @@
 USE defaultdb;
 
 -- 1. Eliminar tablas si ya existen (en orden inverso por las dependencias de las llaves foráneas)
+DROP TABLE IF EXISTS project_volunteers;
 DROP TABLE IF EXISTS project_categories;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS organizations;
+DROP TABLE IF EXISTS users;
 
 -- 2. Crear la tabla organizations con todas las columnas requeridas (name, description, contact_email, logo)
 CREATE TABLE organizations (
@@ -88,3 +90,30 @@ INSERT INTO project_categories (project_id, category_id) VALUES
 (6, 2), (7, 2), (8, 2), (9, 2), (10, 2),
 -- Community Care Network Projects -> Categoría 3
 (11, 3), (12, 3), (13, 3), (14, 3), (15, 3);
+
+-- 10. Crear la tabla users
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(120) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(30) NOT NULL DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 11. Crear la tabla intermedia para voluntariado (relación muchos a muchos: users <-> projects)
+CREATE TABLE project_volunteers (
+    volunteer_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    project_id INT NOT NULL,
+    volunteered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_user_project (user_id, project_id),
+    CONSTRAINT fk_volunteer_user
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_volunteer_project
+        FOREIGN KEY (project_id) REFERENCES projects(project_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);

@@ -17,7 +17,9 @@ import {
     showEditProjectForm,
     processEditProjectForm,
     showAssignCategoriesForm,
-    processAssignCategoriesForm
+    processAssignCategoriesForm,
+    volunteerForProject,
+    removeVolunteerFromProject
 } from './controllers/projects.js';
 import {
     showCategoriesPage,
@@ -68,6 +70,12 @@ router.post('/edit-organization/:id', requireLogin, requireRole('admin'), proces
 // Rutas de proyectos de servicio
 router.get('/projects', showProjectsPage);
 router.get('/project/:id', showProjectDetailsPage);
+
+// Rutas para voluntariado en proyectos (W06 Assignment - Protected by requireLogin)
+router.get('/project/:id/volunteer', requireLogin, volunteerForProject);
+router.post('/project/:id/volunteer', requireLogin, volunteerForProject);
+router.get('/project/:id/unvolunteer', requireLogin, removeVolunteerFromProject);
+router.post('/project/:id/unvolunteer', requireLogin, removeVolunteerFromProject);
 
 // Rutas para crear y editar proyectos de servicio (W04 Assignment / Team Activity / W05 Protected Access)
 router.get('/new-project', requireLogin, requireRole('admin'), showNewProjectForm);

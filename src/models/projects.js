@@ -176,3 +176,85 @@ export const updateProjectCategories = async (projectId, categoryIds = []) => {
         connection.release();
     }
 };
+
+/**
+ * Agrega un usuario como voluntario a un proyecto de servicio.
+ */
+export const addVolunteer = async (userId, projectId) => {
+    try {
+        const sql = `
+            INSERT IGNORE INTO project_volunteers (user_id, project_id)
+            VALUES (?, ?);
+        `;
+        const [result] = await pool.query(sql, [userId, projectId]);
+        return result;
+    } catch (error) {
+        console.error('Error al registrar voluntario en el proyecto:', error);
+        throw error;
+    }
+};
+
+/**
+ * Elimina a un usuario como voluntario de un proyecto de servicio.
+ */
+export const removeVolunteer = async (userId, projectId) => {
+    try {
+        const sql = `
+            DELETE FROM project_volunteers
+            WHERE user_id = ? AND project_id = ?;
+        `;
+        const [result] = await pool.query(sql, [userId, projectId]);
+        return result;
+    } catch (error) {
+        console.error('Error al eliminar voluntario del proyecto:', error);
+        throw error;
+    }
+};
+
+/**
+ * Verifica si un usuario ya está registrado como voluntario en un proyecto específico.
+ */
+export const isUserVolunteering = async (userId, projectId) => {
+    try {
+        const sql = `
+            SELECT volunteer_id
+            FROM project_volunteers
+            WHERE user_id = ? AND project_id = ?
+            LIMIT 1;
+        `;
+        const [rows] = await pool.query(sql, [userId, projectId]);
+        return rows.length > 0;
+    } catch (error) {
+        console.error('Error al verificar estado de voluntariado:', error);
+        throw error;
+    }
+};
+
+/**
+ * Obtiene la lista de proyectos en los que un usuario se ha inscrito como voluntario.
+ */
+export const getProjectsByVolunteer = async (userId) => {
+    try {
+        const sql = `
+            SELECT
+                p.project_id,
+                p.title,
+                p.description,
+                p.location,
+                p.date,
+                p.organization_id,
+                o.name AS organization_name,
+                pv.volunteered_at
+            FROM project_volunteers pv
+            JOIN projects p ON pv.project_id = p.project_id
+            JOIN organizations o ON p.organization_id = o.organization_id
+            WHERE pv.user_id = ?
+            ORDER BY p.date ASC, pv.volunteered_at DESC;
+        `;
+        const [rows] = await pool.query(sql, [userId]);
+        return rows;
+    } catch (error) {
+        console.error('Error al obtener los proyectos del voluntario:', error);
+        throw error;
+    }
+};

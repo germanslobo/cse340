@@ -1,6 +1,7 @@
 // src/controllers/authController.js
 import bcrypt from 'bcryptjs';
 import { createUser, findUserByEmail, getAllUsers } from '../models/users.js';
+import { getProjectsByVolunteer } from '../models/projects.js';
 
 export function showRegister(req, res) {
     res.render('register', {
@@ -140,11 +141,25 @@ export function logout(req, res) {
     });
 }
 
-export function showDashboard(req, res) {
-    res.render('dashboard', {
-        title: 'Dashboard',
-        currentYear: new Date().getFullYear()
-    });
+export async function showDashboard(req, res) {
+    try {
+        const volunteeredProjects = req.session?.user
+            ? await getProjectsByVolunteer(req.session.user.user_id)
+            : [];
+
+        res.render('dashboard', {
+            title: 'Dashboard',
+            currentYear: new Date().getFullYear(),
+            volunteeredProjects
+        });
+    } catch (err) {
+        console.error('Show dashboard error:', err);
+        req.session.flashMessage = {
+            type: 'error',
+            text: 'Unable to load your dashboard.'
+        };
+        return res.redirect('/');
+    }
 }
 
 export async function showUsers(req, res) {

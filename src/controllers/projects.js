@@ -1,10 +1,14 @@
+// src/controllers/projects.js
 import {
     getUpcomingProjects,
     getProjectDetails,
     getCategoriesByProjectId,
     createProject,
     updateProject,
-    updateProjectCategories
+    updateProjectCategories,
+    addVolunteer,
+    removeVolunteer,
+    isUserVolunteering
 } from '../models/projects.js';
 import { getAllOrganizations } from '../models/organizations.js';
 import { getAllCategories } from '../models/categories.js';
@@ -131,16 +135,84 @@ export const showProjectDetailsPage = async (req, res) => {
         }
 
         const categories = await getCategoriesByProjectId(projectId);
+        const currentUser = req.session?.user || null;
+        const isVolunteering = currentUser
+            ? await isUserVolunteering(currentUser.user_id, projectId)
+            : false;
 
         res.render('project', {
             title: project.title,
             currentYear: new Date().getFullYear(),
             project,
-            categories
+            categories,
+            isVolunteering
         });
     } catch (error) {
         console.error('Error retrieving project details:', error);
         res.status(500).render('500', {
+            title: 'Internal Server Error',
+            currentYear: new Date().getFullYear()
+        });
+    }
+};
+
+export const volunteerForProject = async (req, res) => {
+    try {
+        const projectId = parseInt(req.params.id, 10);
+        const userId = req.session.user.user_id;
+
+        if (Number.isNaN(projectId)) {
+            return res.status(400).redirect('/projects');
+        }
+
+        const project = await getProjectDetails(projectId);
+        if (!project) {
+            return res.status(404).render('404', {
+                title: 'Service Project Not Found',
+                currentYear: new Date().getFullYear()
+            });
+        }
+
+        await addVolunteer(userId, projectId);
+        req.session.flashMessage = {
+            type: 'success',
+            text: `You are now volunteering for "${project.title}"!`
+        };
+
+        return res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error volunteering for project:', error);
+        return res.status(500).render('500', {
+            title: 'Internal Server Error',
+            currentYear: new Date().getFullYear()
+        });
+    }
+};
+
+export const removeVolunteerFromProject = async (req, res) => {
+    try {
+        const projectId = parseInt(req.params.id, 10);
+        const userId = req.session.user.user_id;
+        const redirectTarget = req.query.redirect || req.body?.redirect;
+
+        if (Number.isNaN(projectId)) {
+            return res.status(400).redirect('/projects');
+        }
+
+        await removeVolunteer(userId, projectId);
+        req.session.flashMessage = {
+            type: 'success',
+            text: 'You have been removed as a volunteer from this project.'
+        };
+
+        if (redirectTarget === 'dashboard') {
+            return res.redirect('/dashboard');
+        }
+
+        return res.redirect(`/project/${projectId}`);
+    } catch (error) {
+        console.error('Error removing volunteer from project:', error);
+        return res.status(500).render('500', {
             title: 'Internal Server Error',
             currentYear: new Date().getFullYear()
         });

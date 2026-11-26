@@ -19,6 +19,23 @@
                 <a href="/users" class="btn btn-admin">Manage Users</a>
             <% } %>
         </div>
+
+        <section class="volunteered-projects">
+            <h2>My Volunteered Projects</h2>
+            <% if (volunteeredProjects && volunteeredProjects.length > 0) { %>
+                <ul>
+                    <% volunteeredProjects.forEach(proj => { %>
+                        <li>
+                            <a href="/project/<%= proj.project_id %>"><strong><%= proj.title %></strong></a>
+                            <span>— <%= proj.organization_name %> (<%= proj.date %>)</span>
+                            <a href="/project/<%= proj.project_id %>/unvolunteer?redirect=dashboard" class="btn btn-small">Remove Volunteering</a>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>You have not volunteered for any projects yet.</p>
+            <% } %>
+        </section>
     <% } %>
 </section>
 

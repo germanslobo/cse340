@@ -19,6 +19,17 @@
         <% } %>
     </div>
 
+    <% if (currentUser) { %>
+        <section class="volunteer-section">
+            <% if (isVolunteering) { %>
+                <p><strong>Status:</strong> You are volunteering for this project.</p>
+                <a href="/project/<%= project.project_id %>/unvolunteer" class="btn">Remove Volunteering</a>
+            <% } else { %>
+                <a href="/project/<%= project.project_id %>/volunteer" class="btn">Volunteer for this Project</a>
+            <% } %>
+        </section>
+    <% } %>
+
     <br>
     <a href="/project/<%= project.project_id %>/categories">Assign Categories</a>
     <br><br>
