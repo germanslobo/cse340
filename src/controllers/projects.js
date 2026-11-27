@@ -1,4 +1,4 @@
-// src/controllers/projects.js
+import { validationResult } from 'express-validator';
 import {
     getUpcomingProjects,
     getProjectDetails,
@@ -15,93 +15,15 @@ import { getAllCategories } from '../models/categories.js';
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
-const validateProjectInput = ({ title, description, location, date, organization_id }) => {
-    const cleanTitle = typeof title === 'string' ? title.trim() : '';
-    const cleanDescription = typeof description === 'string' ? description.trim() : '';
-    const cleanLocation = typeof location === 'string' ? location.trim() : '';
-    const cleanDate = typeof date === 'string' ? date.trim() : '';
+const buildProjectPayload = ({ title, description, location, date, organization_id }) => {
     const parsedOrgId = parseInt(organization_id, 10);
 
-    if (!cleanTitle || cleanTitle.length < 3 || cleanTitle.length > 150) {
-        return {
-            isValid: false,
-            error: 'Project title is required and must be between 3 and 150 characters.',
-            data: {
-                title: cleanTitle,
-                description: cleanDescription,
-                location: cleanLocation,
-                date: cleanDate,
-                organization_id: Number.isNaN(parsedOrgId) ? '' : parsedOrgId
-            }
-        };
-    }
-
-    if (!cleanDescription || cleanDescription.length < 10 || cleanDescription.length > 1500) {
-        return {
-            isValid: false,
-            error: 'Description is required and must be between 10 and 1500 characters.',
-            data: {
-                title: cleanTitle,
-                description: cleanDescription,
-                location: cleanLocation,
-                date: cleanDate,
-                organization_id: Number.isNaN(parsedOrgId) ? '' : parsedOrgId
-            }
-        };
-    }
-
-    if (!cleanLocation || cleanLocation.length < 2 || cleanLocation.length > 150) {
-        return {
-            isValid: false,
-            error: 'Location is required and must be between 2 and 150 characters.',
-            data: {
-                title: cleanTitle,
-                description: cleanDescription,
-                location: cleanLocation,
-                date: cleanDate,
-                organization_id: Number.isNaN(parsedOrgId) ? '' : parsedOrgId
-            }
-        };
-    }
-
-    if (!cleanDate || Number.isNaN(Date.parse(cleanDate))) {
-        return {
-            isValid: false,
-            error: 'A valid project date is required.',
-            data: {
-                title: cleanTitle,
-                description: cleanDescription,
-                location: cleanLocation,
-                date: cleanDate,
-                organization_id: Number.isNaN(parsedOrgId) ? '' : parsedOrgId
-            }
-        };
-    }
-
-    if (Number.isNaN(parsedOrgId) || parsedOrgId <= 0) {
-        return {
-            isValid: false,
-            error: 'Please select a valid sponsoring organization.',
-            data: {
-                title: cleanTitle,
-                description: cleanDescription,
-                location: cleanLocation,
-                date: cleanDate,
-                organization_id: ''
-            }
-        };
-    }
-
     return {
-        isValid: true,
-        error: null,
-        data: {
-            title: cleanTitle,
-            description: cleanDescription,
-            location: cleanLocation,
-            date: cleanDate,
-            organization_id: parsedOrgId
-        }
+        title: typeof title === 'string' ? title.trim() : '',
+        description: typeof description === 'string' ? description.trim() : '',
+        location: typeof location === 'string' ? location.trim() : '',
+        date: typeof date === 'string' ? date.trim() : '',
+        organization_id: Number.isNaN(parsedOrgId) || parsedOrgId <= 0 ? '' : parsedOrgId
     };
 };
 
@@ -246,16 +168,18 @@ export const showNewProjectForm = async (req, res) => {
 
 export const processNewProjectForm = async (req, res) => {
     try {
-        const { isValid, error, data } = validateProjectInput(req.body);
+        const errors = validationResult(req);
+        const data = buildProjectPayload(req.body);
 
-        if (!isValid) {
+        if (!errors.isEmpty()) {
+            const errorMessage = errors.array().map((err) => err.msg).join(' ');
             const organizations = await getAllOrganizations();
             return res.status(400).render('new-project', {
                 title: 'Create New Service Project',
                 currentYear: new Date().getFullYear(),
                 project: data,
                 organizations,
-                error
+                error: errorMessage
             });
         }
 
@@ -288,7 +212,8 @@ export const showEditProjectForm = async (req, res) => {
             title: `Edit ${project.title}`,
             currentYear: new Date().getFullYear(),
             project,
-            organizations
+            organizations,
+            error: null
         });
     } catch (error) {
         console.error('Error loading edit project form:', error);
@@ -300,18 +225,28 @@ export const showEditProjectForm = async (req, res) => {
 };
 
 export const processEditProjectForm = async (req, res) => {
+    const projectId = req.params.id;
+
     try {
-        const projectId = req.params.id;
-        const { title, description, location, date, organization_id } = req.body;
+        const errors = validationResult(req);
+        const data = buildProjectPayload(req.body);
 
-        await updateProject(projectId, {
-            title,
-            description,
-            location,
-            date,
-            organization_id
-        });
+        if (!errors.isEmpty()) {
+            const errorMessage = errors.array().map((err) => err.msg).join(' ');
+            const organizations = await getAllOrganizations();
+            return res.status(400).render('edit-project', {
+                title: 'Edit Service Project',
+                currentYear: new Date().getFullYear(),
+                project: {
+                    project_id: projectId,
+                    ...data
+                },
+                organizations,
+                error: errorMessage
+            });
+        }
 
+        await updateProject(projectId, data);
         res.redirect(`/project/${projectId}`);
     } catch (error) {
         console.error('Error updating project:', error);

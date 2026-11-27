@@ -1,3 +1,4 @@
+import { validationResult } from 'express-validator';
 import {
     getAllOrganizations,
     getOrganizationById,
@@ -8,58 +9,15 @@ import {
 
 const DEFAULT_LOGO = '/images/default-org.png';
 
-const validateOrganizationInput = ({ name, description, contact_email, logo }) => {
-    const cleanName = typeof name === 'string' ? name.trim() : '';
-    const cleanDescription = typeof description === 'string' ? description.trim() : '';
-    const cleanEmail = typeof contact_email === 'string' ? contact_email.trim() : '';
-    const cleanLogo = typeof logo === 'string' && logo.trim().length > 0
+const buildOrganizationPayload = ({ name, description, contact_email, logo }) => ({
+    name: typeof name === 'string' ? name.trim() : '',
+    description: typeof description === 'string' ? description.trim() : '',
+    contact_email: typeof contact_email === 'string' ? contact_email.trim() : '',
+    logo: typeof logo === 'string' && logo.trim().length > 0
         ? logo.trim()
-        : DEFAULT_LOGO;
+        : DEFAULT_LOGO
+});
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!cleanName || cleanName.length < 3 || cleanName.length > 100) {
-        return {
-            isValid: false,
-            error: 'Organization name is required and must be between 3 and 100 characters.',
-            data: { name: cleanName, description: cleanDescription, contact_email: cleanEmail, logo: cleanLogo }
-        };
-    }
-
-    if (!cleanDescription || cleanDescription.length < 10 || cleanDescription.length > 1000) {
-        return {
-            isValid: false,
-            error: 'Description is required and must be between 10 and 1000 characters.',
-            data: { name: cleanName, description: cleanDescription, contact_email: cleanEmail, logo: cleanLogo }
-        };
-    }
-
-    if (!cleanEmail || !emailRegex.test(cleanEmail) || cleanEmail.length > 150) {
-        return {
-            isValid: false,
-            error: 'A valid contact email address is required.',
-            data: { name: cleanName, description: cleanDescription, contact_email: cleanEmail, logo: cleanLogo }
-        };
-    }
-
-    if (cleanLogo.length > 255) {
-        return {
-            isValid: false,
-            error: 'Logo path or URL cannot exceed 255 characters.',
-            data: { name: cleanName, description: cleanDescription, contact_email: cleanEmail, logo: cleanLogo }
-        };
-    }
-
-    return {
-        isValid: true,
-        error: null,
-        data: { name: cleanName, description: cleanDescription, contact_email: cleanEmail, logo: cleanLogo }
-    };
-};
-
-/**
- * Muestra la lista de todas las organizaciones.
- */
 export const showOrganizationsPage = async (req, res) => {
     try {
         const organizations = await getAllOrganizations();
@@ -77,9 +35,6 @@ export const showOrganizationsPage = async (req, res) => {
     }
 };
 
-/**
- * Muestra los detalles de una organización específica y sus proyectos.
- */
 export const showOrganizationDetailsPage = async (req, res) => {
     try {
         const orgId = req.params.id;
@@ -109,9 +64,6 @@ export const showOrganizationDetailsPage = async (req, res) => {
     }
 };
 
-/**
- * Muestra el formulario para crear una nueva organización.
- */
 export const showNewOrganizationForm = async (req, res) => {
     try {
         res.render('new-organization', {
@@ -134,19 +86,18 @@ export const showNewOrganizationForm = async (req, res) => {
     }
 };
 
-/**
- * Procesa el envío del formulario para crear una organización.
- */
 export const processNewOrganizationForm = async (req, res) => {
     try {
-        const { isValid, error, data } = validateOrganizationInput(req.body);
+        const errors = validationResult(req);
+        const data = buildOrganizationPayload(req.body);
 
-        if (!isValid) {
+        if (!errors.isEmpty()) {
+            const errorMessage = errors.array().map((err) => err.msg).join(' ');
             return res.status(400).render('new-organization', {
                 title: 'Create New Organization',
                 currentYear: new Date().getFullYear(),
                 organization: data,
-                error
+                error: errorMessage
             });
         }
 
@@ -161,9 +112,6 @@ export const processNewOrganizationForm = async (req, res) => {
     }
 };
 
-/**
- * Muestra el formulario precargado para editar una organización.
- */
 export const showEditOrganizationForm = async (req, res) => {
     try {
         const orgId = req.params.id;
@@ -191,16 +139,15 @@ export const showEditOrganizationForm = async (req, res) => {
     }
 };
 
-/**
- * Procesa el envío del formulario para actualizar una organización.
- */
 export const processEditOrganizationForm = async (req, res) => {
     const orgId = req.params.id;
 
     try {
-        const { isValid, error, data } = validateOrganizationInput(req.body);
+        const errors = validationResult(req);
+        const data = buildOrganizationPayload(req.body);
 
-        if (!isValid) {
+        if (!errors.isEmpty()) {
+            const errorMessage = errors.array().map((err) => err.msg).join(' ');
             return res.status(400).render('edit-organization', {
                 title: 'Edit Organization',
                 currentYear: new Date().getFullYear(),
@@ -208,7 +155,7 @@ export const processEditOrganizationForm = async (req, res) => {
                     organization_id: orgId,
                     ...data
                 },
-                error
+                error: errorMessage
             });
         }
 

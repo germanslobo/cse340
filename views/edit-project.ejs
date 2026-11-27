@@ -3,6 +3,10 @@
 <main class="container">
     <h1>Edit Service Project</h1>
 
+    <% if (error) { %>
+        <p class="error-message" role="alert"><%= error %></p>
+    <% } %>
+
     <form action="/edit-project/<%= project.project_id %>" method="POST" class="form-container">
         <div class="form-group">
             <label for="title">Title:</label>
